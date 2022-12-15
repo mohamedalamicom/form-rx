@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
@@ -30,16 +30,13 @@ export class AppComponent implements OnInit {
         Validators.minLength(8),
         Validators.maxLength(10),      
       ]],
-      phone: ['', [
-        Validators.required,
-        Validators.minLength(9),
-        Validators.maxLength(10),
-        Validators.pattern('^[0-9]*$')
-      ]],
+      phones: this.formBuilder.array([]),
       terms: ['', [
         Validators.requiredTrue
       ]]
     });
+
+    this.addPhone();
   }
 
   get username() {
@@ -54,13 +51,44 @@ export class AppComponent implements OnInit {
     return this.registerForm.get('password');
   }
 
-  get phone() {
-    return this.registerForm.get('phone');
+  get phones() {
+    return this.registerForm.get('phones') as FormArray;
   }
 
   get terms() {
     return this.registerForm.get('terms');
   }
+
+  addPhone() {
+    let phone = this.formBuilder.group({
+      phonePrefix: '',
+      phoneNumber: ['', [
+        Validators.required,
+        Validators.minLength(9),
+        Validators.maxLength(10),
+        Validators.pattern('^[0-9]*$')
+      ]]
+    });
+
+    if(this.phones.length < 3)
+      this.phones.push(phone); // 0 => phone // 1 => ph
+
+    console.log(this.phones);
+  }
+
+  getPhoneNumber(index: number) {
+    return this.phones.controls[index].get('phoneNumber');
+  }
+
+  getPhonePrefix(index: number) {
+    return this.phones.controls[index].get('phonePrefix');
+  }
+
+  deletePhone(index: number) {
+    this.phones.removeAt(index); // Supprime là (index) 0...n
+  }
+
+
   submit() {
     if (!this.registerForm.valid) {
       alert('Form is invalid')

@@ -20,7 +20,7 @@
     <label for="email"><b>Email</b></label>
     <input type="text" placeholder="Enter Email" name="email" formControlName="email">
     <div class="error" *ngIf="email?.touched && email?.errors">
-      Invalid E-mail Address 
+      Invalid E-mail Address
     </div>
 
     <label for="psw"><b>Password</b></label>
@@ -31,20 +31,30 @@
 
     <label for="email"><b>Phone Number</b></label>
     <br>
-    <select name="phoneCode" required>
-      <option selected hidden value="">Code</option>
-      <option value="66">+98</option>
-      <option value="66">+99</option>
-      <option value="66">+90</option>
-      <option value="66">+66</option>
-    </select>
-    <input type="phone" name="phone" formControlName="phone" placeholder="812345678">
-    <div class="error" *ngIf="phone?.touched && phone?.errors">
-      Invalid Phone Number
-    </div>
-    <button>+ Add Phone number</button>
 
-    <p><input type="checkbox" formControlName="terms">  By creating an account you agree to our <a href="#" style="color:dodgerblue">Terms & Privacy</a>.</p>
+
+    <div formArrayName="phones">
+      <div *ngFor="let phone of phones.controls; let i=index; let first=first" [formGroupName]="i">
+        <select formControlName="phonePrefix" required>
+          <option selected hidden value="">Code</option>
+          <option value="66">+98</option>
+          <option value="66">+99</option>
+          <option value="66">+90</option>
+          <option value="66">+66</option>
+        </select>
+        <input type="phone" name="phone" formControlName="phoneNumber" placeholder="812345678">
+        <span (click)="deletePhone(i)" *ngIf="!first">Remove</span> 
+        <div class="error" *ngIf="getPhoneNumber(i)?.touched && getPhoneNumber(i)?.errors">
+          Invalid Phone Number
+        </div>
+      </div>
+    </div>
+    <div (click)="addPhone()" >+ Add Phone number</div>
+    <span class="error" *ngIf="phones?.length == 3">You can add up to 3 number max</span>
+
+
+    <p><input type="checkbox" formControlName="terms"> By creating an account you agree to our <a href="#"
+        style="color:dodgerblue">Terms & Privacy</a>.</p>
     <div class="error" *ngIf="terms?.touched && terms?.errors">
       You must agree to the terms in order to register
     </div>
